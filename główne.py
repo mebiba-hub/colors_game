@@ -1,5 +1,8 @@
+#start gry
+
 import random
 import tkinter as tk
+from time import sleep
 
 colors = [
     'white',
@@ -82,8 +85,12 @@ def time_left():
         root.after(1000, time_left)
     else:
         czy_gra = False
-        slowo.config(text="KONIEC", fg="red")
         pole.pack_forget()
+        slowo.config(text="KONIEC", fg="red")
+        sleep(2)
+        slowo.config(text=f"Zakończyłeś grę z {points} punktami", fg="black")
+        with open('ranking_punktów.txt', 'a+') as f:
+            f.write(f"{points}\n")
         wroc.pack(pady=5, padx=5, side=tk.TOP)
 
 
@@ -93,6 +100,7 @@ def pokarz_opcje():
     opcje.pack_forget()
     start_gry.pack_forget()
     napis.pack_forget()
+    ranking.pack_forget()
 
     opcje_powrot.grid(pady=20, padx=5, column=0, row=0)
 
@@ -101,13 +109,43 @@ def pokarz_opcje():
     angielski.grid(pady=5, padx=5, column=2, row=2)
     niemiecki.grid(pady=5, padx=5, column=3, row=2)
 
+def pokarz_ranking():
+    ranksy.pack(fill="both", expand=True)
+
+    opcje.pack_forget()
+    start_gry.pack_forget()
+    napis.pack_forget()
+    ranking.pack_forget()
+
+    ranking_powrot.pack(pady=5, padx=5, anchor="nw")
+
+    rank_napis.pack(pady=5, padx=5, side=tk.TOP)
+    zdobyte_punkty = []
+    with open('ranking_punktów.txt', 'r') as f:
+        for line in f:
+            zdobyte_punkty.append(line.strip())
+    zdobyte_punkty.sort()
+    try:
+        if not zdobyte_punkty:
+            rank_list.config(text='Brak rekordów')
+        else:
+            tekst = ""
+            for i, pkt in enumerate(zdobyte_punkty[:5], start=1):
+                tekst += f"{i}. {pkt}\n"
+            rank_list.config(text=tekst)
+    except IndexError:
+        print(rank_list)
+    rank_list.pack(pady=5, padx=5, side=tk.TOP)
+
 def powrot():
     global play_time
     global points
 
     optionsy.pack_forget()
+    ranksy.pack_forget()
     wroc.pack_forget()
     slowo.pack_forget()
+    ranking_powrot.pack_forget()
     play_time = 30
     points = 0
     napis.config(text='KOLOLOLKI')
@@ -115,6 +153,7 @@ def powrot():
     napis.pack(pady=5, padx=5, side=tk.TOP)
     start_gry.pack(pady=5, padx=5, side=tk.TOP)
     opcje.pack(pady=5, padx=5, side=tk.TOP)
+    ranking.pack(pady=5, padx=5, side=tk.TOP)
 
 def check_answer():
     global points
@@ -152,6 +191,7 @@ def start_game():
 
         start_gry.pack_forget()
         opcje.pack_forget()
+        ranking.pack_forget()
 
         time_left()
         next_color()
@@ -163,12 +203,17 @@ root = tk.Tk()
 root.geometry('500x400')
 
 optionsy = tk.Canvas(root, width=500, height=400)
+ranksy = tk.Canvas(root, width=500, height=400)
 
 #napisy
 napis = tk.Label(root, text='KOLOLOLKI', font=('Comic Sans MS', 15))
 napis.pack(pady=5, padx=5, side=tk.TOP)
 
 zmiana_jezykow = tk.Label(optionsy, font=('Comic Sans MS', 8), text="Wybierz język z poniższych: ")
+
+rank_napis = tk.Label(ranksy, font=('Comic Sans MS', 20), text="RANKING")
+
+rank_list = tk.Label(ranksy, font=('Comic Sans MS', 15), bg='lightgrey')
 
 #języki
 polski = tk.Button(optionsy, font=('Comic Sans MS', 10), text="Polski", bg='white', command=lambda: set_language("pl"))
@@ -184,7 +229,12 @@ start_gry.pack(pady=5, padx=5, side=tk.TOP)
 opcje = tk.Button(root, text='Opcje', fg='white', bg='blue', width=15, height=2, command=pokarz_opcje)
 opcje.pack(pady=5, padx=5, side=tk.TOP)
 
+ranking = tk.Button(root, text='Ranking', fg='white', bg='purple', width=15, height=2, command=pokarz_ranking)
+ranking.pack(pady=5, padx=5, side=tk.TOP)
+
 opcje_powrot = tk.Button(optionsy, text='Powrót', fg='white', bg='red', width=5, height=1, command=powrot)
+
+ranking_powrot = tk.Button(ranksy, text='Powrót', fg='white', bg='red', width=5, height=1, command=powrot)
 
 wroc = tk.Button(root, text='wróć', fg='black', bg='yellow', width=10, height=1, command=powrot)
 
