@@ -1,5 +1,3 @@
-#start gry
-
 import random
 import tkinter as tk
 from time import sleep
@@ -123,8 +121,8 @@ def pokarz_ranking():
     zdobyte_punkty = []
     with open('ranking_punktów.txt', 'r') as f:
         for line in f:
-            zdobyte_punkty.append(line.strip())
-    zdobyte_punkty.sort()
+            zdobyte_punkty.append(int(line.strip()))
+    zdobyte_punkty.sort(reverse=True)
     try:
         if not zdobyte_punkty:
             rank_list.config(text='Brak rekordów')
@@ -239,7 +237,7 @@ ranking_powrot = tk.Button(ranksy, text='Powrót', fg='white', bg='red', width=5
 wroc = tk.Button(root, text='wróć', fg='black', bg='yellow', width=10, height=1, command=powrot)
 
 #mechaniczne do gry
-slowo = tk.Label(root, font=('Comic Sans MS', 15))
+slowo = tk.Label(root, font=('Comic Sans MS', 15), bg='lightgrey')
 
 pole = tk.Entry(root, font=('Comic Sans MS', 10))
 
