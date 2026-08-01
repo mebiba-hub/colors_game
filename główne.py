@@ -1,5 +1,3 @@
-
-
 import random
 import tkinter as tk
 from time import sleep
